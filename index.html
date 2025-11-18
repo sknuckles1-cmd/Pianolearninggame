@@ -122,7 +122,8 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- --- VIEW 1: SECTION INFO CARD (MAIN MENU) --- -->
-    <div id="sectionView" class="flex-grow flex flex-col items-center justify-center p-6 text-center relative">
+    <!-- Updated layout: justify-start + pt-24 ensures header is visible and moved down on short screens -->
+    <div id="sectionView" class="flex-grow flex flex-col items-center justify-start pt-24 pb-10 px-6 text-center relative overflow-y-auto">
         
         <!-- Score Badge -->
         <div class="absolute top-4 left-4 bg-slate-800 border-2 border-yellow-500 rounded-lg px-4 py-2 shadow-lg z-20">
@@ -138,11 +139,11 @@
         </div>
 
         <!-- Personalized Header -->
-        <h1 class="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-8 drop-shadow-lg animate-float mt-12">
+        <h1 class="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-8 drop-shadow-lg animate-float">
             AIDEN LEARNS<br>MEGALOVANIA!
         </h1>
 
-        <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl border-4 border-slate-700 p-8 relative overflow-hidden">
+        <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl border-4 border-slate-700 p-8 relative overflow-hidden flex-shrink-0">
             <div class="absolute top-4 right-4 text-slate-500 font-mono text-sm">
                 LEVEL <span id="levelDisplay">1/5</span>
             </div>
