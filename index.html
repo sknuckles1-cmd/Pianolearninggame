@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aiden Learns Megalovania!</title>
+    <title>Megalovania LEVEL 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
+            background-color: #1a0505; /* Dark Red Background */
             color: #fff;
             user-select: none;
             overflow-x: hidden;
@@ -28,7 +28,7 @@
         
         @keyframes scorePop {
             0% { transform: scale(1); }
-            50% { transform: scale(1.5); color: #facc15; }
+            50% { transform: scale(1.5); color: #ef4444; }
             100% { transform: scale(1); }
         }
         .score-pop {
@@ -40,16 +40,9 @@
         }
 
         /* Scrollbar for tips */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569; 
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2d0a0a; }
+        ::-webkit-scrollbar-thumb { background: #7f1d1d; border-radius: 4px; }
 
         /* Piano Styles */
         .white-key {
@@ -68,7 +61,7 @@
             transition: all 0.05s;
             box-shadow: 0 4px 0 #cbd5e1;
             cursor: pointer;
-            touch-action: none; /* Prevents zooming/scrolling on tap */
+            touch-action: none;
         }
         .white-key:active, .white-key.pressed {
             background-color: #e2e8f0;
@@ -76,12 +69,12 @@
             box-shadow: none;
         }
         .white-key.target {
-            background-color: #60a5fa;
+            background-color: #ef4444; /* RED for Hard Mode */
             color: white;
-            box-shadow: 0 4px 0 #2563eb;
+            box-shadow: 0 4px 0 #991b1b;
         }
         .white-key.correct {
-            background-color: #4ade80;
+            background-color: #22c55e; /* Green for correct */
             color: white;
             box-shadow: 0 4px 0 #16a34a;
         }
@@ -89,13 +82,13 @@
         .black-key {
             height: 60%;
             width: 4.5%;
-            background-color: #1e293b;
+            background-color: #000;
             position: absolute;
             top: 0;
             z-index: 10;
             border-radius: 0 0 6px 6px;
             transition: all 0.05s;
-            box-shadow: 0 4px 0 #0f172a;
+            box-shadow: 0 4px 0 #111;
             display: flex;
             justify-content: center;
             align-items: flex-end;
@@ -104,16 +97,16 @@
             font-size: 0.6rem;
             cursor: pointer;
             pointer-events: auto;
-            touch-action: none; /* Prevents zooming/scrolling on tap */
+            touch-action: none;
         }
         .black-key:active, .black-key.pressed {
-            background-color: #334155;
+            background-color: #333;
             transform: translateY(4px);
             box-shadow: none;
         }
         .black-key.target {
-            background-color: #3b82f6;
-            box-shadow: 0 4px 0 #1d4ed8;
+            background-color: #b91c1c; /* Dark Red */
+            box-shadow: 0 4px 0 #7f1d1d;
         }
         .black-key.correct {
             background-color: #22c55e;
@@ -123,169 +116,139 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- --- VIEW 1: SECTION INFO CARD (MAIN MENU) --- -->
+    <!-- --- VIEW 1: SECTION INFO CARD --- -->
     <div id="sectionView" class="flex-grow flex flex-col items-center justify-start pt-24 pb-10 px-6 text-center relative overflow-y-auto">
         
         <!-- Score Badge -->
-        <div class="absolute top-4 left-4 bg-slate-800 border-2 border-yellow-500 rounded-lg px-4 py-2 shadow-lg z-20">
-            <div class="text-xs text-yellow-500 font-bold uppercase tracking-widest">Total Score</div>
+        <div class="absolute top-4 left-4 bg-black/50 border-2 border-red-500 rounded-lg px-4 py-2 shadow-lg z-20">
+            <div class="text-xs text-red-500 font-bold uppercase tracking-widest">Total Score</div>
             <div class="menu-score text-2xl font-black text-white">0</div>
         </div>
 
         <!-- Tips Button -->
         <div class="absolute top-4 right-4 z-20">
-            <button onclick="showTips()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg shadow-lg border-b-4 border-indigo-800 active:border-0 active:translate-y-1 transition-all flex items-center gap-2">
-                <span>📜</span> Secret Guide
+            <button onclick="showTips()" class="bg-red-800 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg border-b-4 border-red-950 active:border-0 active:translate-y-1 transition-all flex items-center gap-2">
+                <span>🔥</span> Pro Tips
             </button>
         </div>
 
-        <!-- Personalized Header -->
-        <h1 class="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-8 drop-shadow-lg animate-float">
-            AIDEN LEARNS<br>MEGALOVANIA!
+        <!-- Hard Mode Header -->
+        <h1 class="text-4xl sm:text-6xl font-black text-red-500 mb-2 drop-shadow-[0_4px_0_rgba(0,0,0,1)] animate-float mt-12 tracking-tighter">
+            HARD MODE
         </h1>
+        <p class="text-gray-400 text-sm mb-8 font-mono">LEVEL 2 ARRANGEMENT</p>
 
-        <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl border-4 border-slate-700 p-8 relative overflow-hidden flex-shrink-0">
-            <div class="absolute top-4 right-4 text-slate-500 font-mono text-sm">
-                LEVEL <span id="levelDisplay">1/5</span>
+        <div class="max-w-md w-full bg-zinc-900 rounded-2xl shadow-2xl border-4 border-red-900 p-8 relative overflow-hidden flex-shrink-0">
+            <div class="absolute top-4 right-4 text-red-500 font-mono text-sm font-bold">
+                STAGE <span id="levelDisplay">1/7</span>
             </div>
 
-            <h2 id="sectionTitle" class="text-2xl font-bold text-yellow-400 mb-4 tracking-tight">PART 1: INTRO</h2>
+            <h2 id="sectionTitle" class="text-2xl font-bold text-white mb-4 tracking-tight">INTRO (RHYTHM)</h2>
             
-            <div class="bg-slate-900 rounded-lg p-6 mb-6 text-left">
-                <h3 class="text-gray-400 text-xs font-bold uppercase mb-2">Left Hand (Bass)</h3>
-                <p id="lhInstruction" class="text-xl font-bold text-red-400 mb-4">Hold Low D</p>
+            <div class="bg-black/40 rounded-lg p-6 mb-6 text-left border border-red-900/30">
+                <h3 class="text-red-400 text-xs font-bold uppercase mb-1">Left Hand (The Challenge!)</h3>
+                <p id="lhInstruction" class="text-xl font-bold text-white mb-4 animate-pulse">Pulse D-D-D-D</p>
                 
-                <h3 class="text-gray-400 text-xs font-bold uppercase mb-2">Right Hand (Melody)</h3>
+                <h3 class="text-blue-400 text-xs font-bold uppercase mb-1">Right Hand</h3>
                 <p id="rhInstruction" class="text-2xl font-bold text-white leading-relaxed">
                     D D D^ A Ab G F D F G
                 </p>
             </div>
 
-            <button onclick="startPractice()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_4px_0_rgb(30,58,138)] active:shadow-none active:translate-y-1 transition-all">
-                START GAME! 🎹
+            <button onclick="startPractice()" class="w-full bg-red-600 hover:bg-red-500 text-white text-xl font-bold py-4 rounded-xl shadow-[0_4px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1 transition-all">
+                START LEVEL 2 🎹
             </button>
 
             <div class="mt-4 flex justify-between">
-                <button onclick="prevSection()" class="text-slate-500 hover:text-white text-sm font-bold px-4 py-2">← Back</button>
-                <button onclick="nextSection()" class="text-slate-500 hover:text-white text-sm font-bold px-4 py-2">Skip →</button>
+                <button onclick="prevSection()" class="text-zinc-500 hover:text-white text-sm font-bold px-4 py-2">← Back</button>
+                <button onclick="nextSection()" class="text-zinc-500 hover:text-white text-sm font-bold px-4 py-2">Skip →</button>
             </div>
         </div>
     </div>
 
     <!-- --- VIEW 2: TIPS MODAL --- -->
-    <div id="tipsView" class="hidden fixed inset-0 bg-slate-900/95 z-50 flex flex-col items-center justify-center p-4">
-        <div class="max-w-2xl w-full bg-slate-800 rounded-2xl border-4 border-indigo-500 shadow-2xl flex flex-col max-h-[90vh]">
-            
-            <!-- Header -->
-            <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-indigo-900/30">
-                <h2 class="text-2xl font-black text-indigo-400 flex items-center gap-2">
-                    <span>💀</span> AIDEN'S SECRET GUIDE
+    <div id="tipsView" class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-4">
+        <div class="max-w-2xl w-full bg-zinc-900 rounded-2xl border-4 border-red-600 shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-zinc-800 flex justify-between items-center bg-red-950/30">
+                <h2 class="text-2xl font-black text-red-500 flex items-center gap-2">
+                    <span>🔥</span> HARD MODE TIPS
                 </h2>
-                <button onclick="hideTips()" class="text-slate-400 hover:text-white font-bold text-2xl">&times;</button>
+                <button onclick="hideTips()" class="text-zinc-400 hover:text-white font-bold text-2xl">&times;</button>
             </div>
-
-            <!-- Content -->
             <div class="p-6 overflow-y-auto text-left space-y-6">
-                
-                <div class="bg-slate-700/50 p-4 rounded-lg border-l-4 border-blue-500">
-                    <h3 class="text-lg font-bold text-white mb-1">1. 🕷️ Spider Fingers</h3>
-                    <p class="text-slate-300 text-sm">Pretend your hand is a spider! Keep your fingers <strong>curved</strong>, not flat like pancakes. This makes you faster!</p>
+                <div class="bg-zinc-800/50 p-4 rounded-lg border-l-4 border-red-500">
+                    <h3 class="text-lg font-bold text-white mb-1">1. The Left Hand Pulse</h3>
+                    <p class="text-zinc-300 text-sm">No more holding notes! Tap the bass note <strong>4 times</strong> like a heartbeat: "Dum-dum-dum-dum".</p>
                 </div>
-
-                <div class="bg-slate-700/50 p-4 rounded-lg border-l-4 border-green-500">
-                    <h3 class="text-lg font-bold text-white mb-1">2. 🐢 Slow Motion Mode</h3>
-                    <p class="text-slate-300 text-sm">Don't rush! Play it in <strong>Super Slow Motion</strong> 3 times perfectly. Your brain will speed it up automatically later!</p>
+                <div class="bg-zinc-800/50 p-4 rounded-lg border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold text-white mb-1">2. The Solo Run</h3>
+                    <p class="text-zinc-300 text-sm">In Stage 5, you climb fast! Use your thumb on F, index on G, and let your fingers walk up the black keys.</p>
                 </div>
-
-                <div class="bg-slate-700/50 p-4 rounded-lg border-l-4 border-purple-500">
-                    <h3 class="text-lg font-bold text-white mb-1">3. 🖐️ Use Pinky & Thumb</h3>
-                    <p class="text-slate-300 text-sm">Use your <strong>Thumb</strong> for low notes and your <strong>Pinky</strong> for high notes so your hand doesn't have to jump as much.</p>
+                <div class="bg-zinc-800/50 p-4 rounded-lg border-l-4 border-yellow-500">
+                    <h3 class="text-lg font-bold text-white mb-1">3. The Grand Finale</h3>
+                    <p class="text-zinc-300 text-sm">The song ends with a huge run from Low D all the way to High D. Move your whole body to reach it!</p>
                 </div>
-
-                <div class="bg-slate-700/50 p-4 rounded-lg border-l-4 border-yellow-500">
-                    <h3 class="text-lg font-bold text-white mb-1">4. 👀 Look Before You Leap</h3>
-                    <p class="text-slate-300 text-sm">For the big jumps, <strong>look at the key with your eyes first</strong>. Your hand will follow your eyes!</p>
-                </div>
-
-                <div class="bg-slate-700/50 p-4 rounded-lg border-l-4 border-red-500">
-                    <h3 class="text-lg font-bold text-white mb-1">5. ⚓ The Anchor</h3>
-                    <p class="text-slate-300 text-sm">If you get lost, stop and find the <strong>Left Hand Bass Note</strong> (D, C, B, or Bb). It's the boss of the rhythm!</p>
-                </div>
-
             </div>
-
-            <!-- Footer -->
-            <div class="p-4 border-t border-slate-700 bg-slate-900/50 text-center">
-                <button onclick="hideTips()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg shadow-lg transition-all">
-                    Got it! Let's Play!
+            <div class="p-4 border-t border-zinc-800 bg-zinc-900/50 text-center">
+                <button onclick="hideTips()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg shadow-lg transition-all">
+                    Ready!
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- --- VIEW 3: PIANO PRACTICE (GAME VIEW) --- -->
+    <!-- --- VIEW 3: PIANO PRACTICE --- -->
     <div id="practiceView" class="hidden flex-grow flex flex-col items-center justify-between p-4 relative">
         
-        <!-- Top HUD (STICKY) -->
-        <div class="sticky top-0 z-50 w-full max-w-4xl flex justify-between items-center mb-8 bg-slate-900/95 backdrop-blur-md p-3 rounded-xl border border-slate-700 shadow-2xl transition-all">
+        <!-- Sticky HUD -->
+        <div class="sticky top-0 z-50 w-full max-w-4xl flex justify-between items-center mb-8 bg-zinc-900/95 backdrop-blur-md p-3 rounded-xl border border-zinc-700 shadow-2xl transition-all">
             <div class="flex items-center gap-4">
-                <button onclick="exitPractice()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-lg text-sm shadow-md active:scale-95 transition-all">
-                    ✕ Exit
+                <button onclick="exitPractice()" class="bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded-lg text-sm shadow-md active:scale-95 transition-all">
+                    ✕
                 </button>
-                <!-- Score Display In-Game -->
-                <div class="bg-slate-800 border border-yellow-500/50 rounded px-3 py-1 shadow-inner">
-                    <span class="text-xs text-yellow-500 font-bold mr-2">SCORE:</span>
+                <div class="bg-black border border-red-500/50 rounded px-3 py-1 shadow-inner">
+                    <span class="text-xs text-red-500 font-bold mr-2">SCORE:</span>
                     <span class="game-score text-xl font-black text-white">0</span>
                 </div>
             </div>
-            
             <div class="text-right">
-                <div class="text-xs text-slate-400 uppercase font-bold text-red-300">Left Hand (Bass)</div>
-                <div id="hudBass" class="text-2xl font-black text-red-400 drop-shadow-md">D</div>
+                <div class="text-xs text-zinc-400 uppercase font-bold">Left Hand (Pulse!)</div>
+                <div id="hudBass" class="text-2xl font-black text-blue-400 drop-shadow-md">D</div>
             </div>
         </div>
 
         <!-- Note Display -->
         <div class="flex-grow flex flex-col items-center justify-center w-full mb-4">
-            <!-- Hand Label -->
-            <div class="text-cyan-400 text-xl sm:text-2xl font-black mb-4 uppercase tracking-widest drop-shadow-md animate-pulse">
-                Right Hand (Melody) ✋
+            <div class="text-red-400 text-xl sm:text-2xl font-black mb-4 uppercase tracking-widest drop-shadow-md animate-pulse">
+                Right Hand ✋
             </div>
-            <div id="targetNote" class="text-8xl font-black text-yellow-300 drop-shadow-lg transition-all duration-75 scale-100">
+            <div id="targetNote" class="text-8xl font-black text-white drop-shadow-[0_0_15px_rgba(239,68,68,0.8)] transition-all duration-75 scale-100">
                 D
             </div>
-            <div id="progressBar" class="w-64 h-2 bg-slate-700 rounded-full mt-8 overflow-hidden">
-                <div id="progressFill" class="h-full bg-green-500 w-0 transition-all duration-300"></div>
+            <div id="progressBar" class="w-64 h-2 bg-zinc-800 rounded-full mt-8 overflow-hidden">
+                <div id="progressFill" class="h-full bg-red-600 w-0 transition-all duration-300"></div>
             </div>
         </div>
 
-        <!-- Piano Container -->
+        <!-- Piano -->
         <div class="w-full max-w-4xl h-48 sm:h-64 relative select-none mt-auto">
-            <!-- White Keys -->
-            <div id="whiteKeys" class="absolute inset-0 flex">
-                <!-- Generated by JS -->
-            </div>
-            <!-- Black Keys -->
-            <div id="blackKeys" class="absolute inset-0 pointer-events-none">
-                <!-- Generated by JS -->
-            </div>
+            <div id="whiteKeys" class="absolute inset-0 flex"></div>
+            <div id="blackKeys" class="absolute inset-0 pointer-events-none"></div>
         </div>
     </div>
 
     <!-- --- VIEW 4: SUCCESS SCREEN --- -->
-    <div id="successView" class="hidden flex-grow flex flex-col items-center justify-center p-6 text-center bg-green-900/20">
-        
-        <div class="mb-8 bg-slate-900/80 p-6 rounded-2xl border-2 border-yellow-500 shadow-2xl transform scale-110">
-            <div class="text-yellow-400 font-bold tracking-widest mb-2">CURRENT SCORE</div>
+    <div id="successView" class="hidden flex-grow flex flex-col items-center justify-center p-6 text-center bg-red-900/20">
+        <div class="mb-8 bg-black/80 p-6 rounded-2xl border-2 border-red-500 shadow-2xl transform scale-110">
+            <div class="text-red-400 font-bold tracking-widest mb-2">FINAL SCORE</div>
             <div class="final-score text-6xl font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">0</div>
         </div>
-
-        <h1 class="text-5xl font-black text-green-400 mb-4 animate-bounce">NICE JOB AIDEN!</h1>
-        <p class="text-xl text-white mb-8">You nailed that section.</p>
-        <button onclick="nextSection()" class="bg-green-600 hover:bg-green-500 text-white text-2xl font-bold py-4 px-12 rounded-xl shadow-[0_4px_0_rgb(20,83,45)] active:shadow-none active:translate-y-1 transition-all">
-            Next Part →
+        <h1 class="text-5xl font-black text-white mb-4 animate-bounce">LEVEL COMPLETE!</h1>
+        <p class="text-xl text-zinc-300 mb-8">You are filled with DETERMINATION.</p>
+        <button onclick="nextSection()" class="bg-red-600 hover:bg-red-500 text-white text-2xl font-bold py-4 px-12 rounded-xl shadow-[0_4px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1 transition-all">
+            Next Challenge →
         </button>
-        <button onclick="restartGame()" class="mt-6 text-slate-400 hover:text-white underline">
+        <button onclick="restartGame()" class="mt-6 text-zinc-500 hover:text-white underline">
             Restart All
         </button>
     </div>
@@ -293,7 +256,6 @@
     <script>
         // --- 0. AUDIO ENGINE ---
         let audioCtx;
-        
         const noteFreqs = {
             'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
             'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
@@ -306,9 +268,7 @@
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContext();
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const buffer = audioCtx.createBuffer(1, 1, 22050);
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
@@ -326,86 +286,110 @@
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
 
-            osc.type = 'triangle'; 
+            // Square wave for more "8-bit" intensity in hard mode
+            osc.type = 'square'; 
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01); 
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5); 
+            // Low-pass filter to soften the square wave (make it sound like NES)
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = "lowpass";
+            filter.frequency.value = 1000;
 
-            osc.connect(gainNode);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.01); 
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); 
+
+            osc.connect(filter);
+            filter.connect(gainNode);
             gainNode.connect(audioCtx.destination);
 
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.5);
+            osc.stop(audioCtx.currentTime + 0.4);
         }
 
-        // --- 1. DATA BLOCKS ---
-        const introD = [
-            {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D^', b:'D'}, {n:'A', b:'D'}, 
-            {n:'G#', b:'D'}, {n:'G', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'G', b:'D'}
-        ];
-        const introC = [
-            {n:'D', b:'C'}, {n:'D', b:'C'}, {n:'D^', b:'C'}, {n:'A', b:'C'}, 
-            {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}
-        ];
-        const introB = [
-            {n:'D', b:'B'}, {n:'D', b:'B'}, {n:'D^', b:'B'}, {n:'A', b:'B'}, 
-            {n:'G#', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'D', b:'B'}, {n:'F', b:'B'}, {n:'G', b:'B'}
-        ];
-        const introBb = [
-            {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'A', b:'Bb'}, 
-            {n:'G#', b:'Bb'}, {n:'G', b:'Bb'}, {n:'F', b:'Bb'}, {n:'D', b:'Bb'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
+        // --- 1. LEVEL 2 DATA ---
+        // Rhythmic bass instructions are in the Section Titles/LH Instructions.
+        
+        // Block 1: Intro (Standard Notes)
+        const introNotes = [
+            {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D^', b:'D'}, {n:'A', b:'D'}, {n:'G#', b:'D'}, {n:'G', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'G', b:'D'},
+            {n:'D', b:'C'}, {n:'D', b:'C'}, {n:'D^', b:'C'}, {n:'A', b:'C'}, {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'},
+            {n:'D', b:'B'}, {n:'D', b:'B'}, {n:'D^', b:'B'}, {n:'A', b:'B'}, {n:'G#', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'D', b:'B'}, {n:'F', b:'B'}, {n:'G', b:'B'},
+            {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'A', b:'Bb'}, {n:'G#', b:'Bb'}, {n:'G', b:'Bb'}, {n:'F', b:'Bb'}, {n:'D', b:'Bb'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
         ];
 
-        // Combine Intro Loops into one block for re-use
-        const fullIntroLoop = [...introD, ...introC, ...introB, ...introBb];
-
-        const chorus = [
+        // Block 2: Chorus (Expanded)
+        const chorusNotes = [
+            // D Bass
             {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D', b:'D'},
-            {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}, {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'},
+            // C Bass (The Slide)
+            {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}, {n:'G#', b:'C'}, {n:'A', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'},
+            // B Bass
             {n:'F', b:'B'}, {n:'F', b:'B'}, {n:'F', b:'B'}, {n:'G', b:'B'}, {n:'G#', b:'B'}, {n:'A', b:'B'}, {n:'C^', b:'B'}, {n:'A', b:'B'},
+            // Bb Bass (The Jump)
             {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'A^', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'C^', b:'Bb'}, {n:'A^', b:'Bb'}
         ];
 
-        // New Bridge Section (Slow/Quiet)
-        const bridge = [
+        // Block 3: THE SOLO (New!)
+        const soloNotes = [
+            {n:'A^', b:'D'}, {n:'A^', b:'D'}, {n:'A^', b:'D'}, {n:'G', b:'D'}, {n:'G', b:'D'}, {n:'G', b:'D'}, {n:'A^', b:'D'},
+            {n:'A^', b:'C'}, {n:'A^', b:'C'}, {n:'A^', b:'C'}, {n:'G', b:'C'}, {n:'A^', b:'C'}, {n:'C^', b:'C'}, {n:'A^', b:'C'}, {n:'G', b:'C'},
+            // Fast Descent
+            {n:'D', b:'B'}, {n:'A', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'C', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'E', b:'B'},
+            // The Turnaround
+            {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'F', b:'Bb'}, {n:'C', b:'Bb'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}, {n:'G#', b:'Bb'}, {n:'G', b:'Bb'}, {n:'F', b:'Bb'}
+        ];
+
+        // Block 4: The Bridge (Quiet)
+        const bridgeNotes = [
             {n:'F', b:'D'}, {n:'G', b:'D'}, {n:'G#', b:'C'}, {n:'G', b:'C'}, 
             {n:'F', b:'B'}, {n:'D', b:'B'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
         ];
 
-        const ending = [
+        // Block 5: Ending Run (Expanded)
+        const endingNotes = [
+            {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'A', b:'D'}, {n:'D^', b:'D'}, {n:'F^', b:'D'}, {n:'A^', b:'D'}, {n:'END', b:''}
+        ];
+        // F^ and A^ are technically octave 5, but our keyboard only goes to 5. 
+        // We'll reuse D^ logic for F/A to map them to high keys or just highest available.
+        // Actually, let's keep ending simpler for 2 octave limit: D F A D^
+        const endingSimple = [
             {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'A', b:'D'}, {n:'D^', b:'D'}, {n:'END', b:''}
         ];
 
-        // --- SECTIONS DEFINITION ---
+        // --- SECTIONS ---
         const sections = [
-            { title: "Part 1: Intro (D Loop)", lh: "Hold Low D", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introD },
-            { title: "Part 1: Intro (C Loop)", lh: "Hold Low C", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introC },
-            { title: "Part 1: Intro (B Loop)", lh: "Hold Low B", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introB },
-            { title: "Part 1: Intro (Bb Loop)", lh: "Hold Low Bb", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introBb },
-            { title: "Part 2: Chorus", lh: "Hold D -> C -> B -> Bb", rh: "The Fast Part!", notes: chorus },
-            { title: "Part 3: The Bridge", lh: "Slow Down...", rh: "F... G... G#... G...", notes: bridge }
+            { 
+                title: "Level 2: Intro", 
+                lh: "Pulse 4 Times! (D-D-D-D)", 
+                rh: "D D D^ A Ab G F D F G", 
+                notes: introNotes 
+            },
+            { 
+                title: "Level 2: Chorus", 
+                lh: "Pulse C-C-C-C", 
+                rh: "F F F F D D D...", 
+                notes: chorusNotes 
+            },
+            { 
+                title: "Level 2: The Solo", 
+                lh: "Pulse B-B-B-B", 
+                rh: "Fast Fingers! (D A G F C G F E)", 
+                notes: soloNotes 
+            },
+            { 
+                title: "Level 2: The Bridge", 
+                lh: "Slow Pulse...", 
+                rh: "F... G... Ab... G...", 
+                notes: bridgeNotes 
+            },
+            { 
+                title: "FINAL STAGE: FULL RUN", 
+                lh: "Pulse the whole time!", 
+                rh: "Don't stop until the end!", 
+                notes: [...introNotes, ...chorusNotes, ...soloNotes, ...bridgeNotes, ...introNotes, ...endingSimple]
+            }
         ];
-
-        // --- FINAL STAGE ASSEMBLY ---
-        // Structure: Intro x2 -> Chorus -> Bridge -> Intro -> Ending
-        const fullSongNotes = [
-            ...fullIntroLoop, // Intro 1
-            ...fullIntroLoop, // Intro 2
-            ...chorus,        // Chorus
-            ...bridge,        // Bridge
-            ...fullIntroLoop, // Intro 3
-            ...ending         // Ending
-        ];
-
-        sections.push({
-            title: "FINAL STAGE: FULL SONG RUN!",
-            lh: "You're ready for the stage!",
-            rh: "Play the whole song from start to finish!",
-            notes: fullSongNotes
-        });
-
 
         // --- 2. STATE ---
         let currentSectionIndex = 0;
@@ -440,10 +424,7 @@
                     wk.dataset.note = note + oct;
                     wk.innerHTML = `<span class="text-xs sm:text-sm">${note}</span>`;
                     
-                    const playFn = (e) => {
-                        e.preventDefault();
-                        playNote(note + oct);
-                    };
+                    const playFn = (e) => { e.preventDefault(); playNote(note + oct); };
                     wk.addEventListener('pointerdown', playFn);
                     
                     whiteContainer.appendChild(wk);
@@ -451,7 +432,6 @@
                     if (note !== 'E' && note !== 'B') {
                         const bk = document.createElement('div');
                         bk.className = 'black-key';
-                        
                         const leftPos = ((globalWhiteIndex + 1) * whiteKeyWidthPercent) - (2.25); 
                         bk.style.left = `${leftPos}%`;
                         
@@ -463,10 +443,7 @@
                         bk.textContent = displayLabel;
                         bk.dataset.note = sharpNote;
                         
-                        const playFnBlack = (e) => {
-                            e.preventDefault(); 
-                            playNote(sharpNote);
-                        };
+                        const playFnBlack = (e) => { e.preventDefault(); playNote(sharpNote); };
                         bk.addEventListener('pointerdown', playFnBlack);
                         
                         blackContainer.appendChild(bk);
@@ -477,14 +454,8 @@
         }
 
         // --- 5. APP LOGIC ---
-
-        function showTips() {
-            tipsView.classList.remove('hidden');
-        }
-
-        function hideTips() {
-            tipsView.classList.add('hidden');
-        }
+        function showTips() { tipsView.classList.remove('hidden'); }
+        function hideTips() { tipsView.classList.add('hidden'); }
 
         function updateScoreUI() {
             const scoreElements = document.querySelectorAll('.menu-score, .game-score, .final-score');
@@ -499,17 +470,7 @@
         function updateSectionView() {
             const section = sections[currentSectionIndex];
             const titleEl = document.getElementById('sectionTitle');
-            
             titleEl.textContent = section.title;
-            
-            if(currentSectionIndex === sections.length - 1) {
-                titleEl.classList.remove('text-yellow-400');
-                titleEl.classList.add('text-red-500', 'animate-pulse');
-            } else {
-                titleEl.classList.add('text-yellow-400');
-                titleEl.classList.remove('text-red-500', 'animate-pulse');
-            }
-
             document.getElementById('lhInstruction').textContent = section.lh;
             document.getElementById('rhInstruction').textContent = section.rh;
             document.getElementById('levelDisplay').textContent = `${currentSectionIndex + 1} / ${sections.length}`;
@@ -518,14 +479,11 @@
 
         function startPractice() {
             initAudio();
-
             currentNoteList = sections[currentSectionIndex].notes;
             currentNoteIndex = 0;
-            
             sectionView.classList.add('hidden');
             successView.classList.add('hidden');
             practiceView.classList.remove('hidden');
-            
             updatePracticeState();
         }
 
@@ -534,13 +492,6 @@
             successView.classList.add('hidden');
             sectionView.classList.remove('hidden');
             updateScoreUI();
-        }
-
-        function prevSection() {
-            if (currentSectionIndex > 0) {
-                currentSectionIndex--;
-                updateSectionView();
-            }
         }
 
         function nextSection() {
@@ -557,6 +508,13 @@
                 successView.classList.add('hidden');
             }
         }
+        
+        function prevSection() {
+            if (currentSectionIndex > 0) {
+                currentSectionIndex--;
+                updateSectionView();
+            }
+        }
 
         function restartGame() {
             currentSectionIndex = 0;
@@ -569,23 +527,18 @@
 
         function updatePracticeState() {
             const noteObj = currentNoteList[currentNoteIndex];
-            
             if (noteObj.n === 'END') {
                 practiceView.classList.add('hidden');
                 successView.classList.remove('hidden');
                 return;
             }
-
             document.getElementById('hudBass').textContent = noteObj.b;
-            
             let displayNote = noteObj.n;
             if (displayNote === 'G#') displayNote = 'Ab';
             if (displayNote === 'A#') displayNote = 'Bb';
             document.getElementById('targetNote').textContent = displayNote;
-
             const percent = (currentNoteIndex / (currentNoteList.length - 1)) * 100;
             document.getElementById('progressFill').style.width = `${percent}%`;
-
             highlightTargetKey(noteObj.n);
         }
 
@@ -593,14 +546,11 @@
             document.querySelectorAll('.target, .correct').forEach(el => {
                 el.classList.remove('target', 'correct');
             });
-
             let octave = 4;
             let cleanNote = note.replace('^', '');
             if (note.includes('^')) octave = 5;
-            
             if (cleanNote === 'Bb') cleanNote = 'A#';
             if (cleanNote === 'Ab') cleanNote = 'G#'; 
-
             const selector = cleanNote + octave;
             const keyEl = document.querySelector(`[data-note="${selector}"]`);
             if (keyEl) keyEl.classList.add('target');
@@ -623,13 +573,10 @@
             
             if (noteId === targetId) {
                 if (clickedKey) clickedKey.classList.add('correct');
-                
-                totalScore += 100;
+                totalScore += 250; // More points for Hard Mode!
                 updateScoreUI();
-
                 const noteDisplay = document.getElementById('targetNote');
                 noteDisplay.classList.add('scale-125', 'text-green-400');
-                
                 setTimeout(() => {
                     if (clickedKey) clickedKey.classList.remove('correct');
                     noteDisplay.classList.remove('scale-125', 'text-green-400');
@@ -643,53 +590,41 @@
                 }, 150);
             } else {
                 if (clickedKey) {
-                    clickedKey.style.backgroundColor = '#ef4444';
-                    setTimeout(() => {
-                        clickedKey.style.backgroundColor = '';
-                    }, 200);
+                    clickedKey.style.backgroundColor = '#7f1d1d';
+                    setTimeout(() => { clickedKey.style.backgroundColor = ''; }, 200);
                 }
             }
         }
-        
+
+        // Keyboard Support
         const keyMap = {
             'a': 'C', 's': 'D', 'd': 'E', 'f': 'F', 'g': 'G', 'h': 'A', 'j': 'B',
             'w': 'C#', 'e': 'D#', 't': 'F#', 'y': 'G#', 'u': 'A#',
         };
-
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (keyMap[key]) {
-                const noteName = keyMap[key];
-                handleKeyboardInput(noteName);
+                if (!currentNoteList || currentNoteList.length === 0) return;
+                const targetObj = currentNoteList[currentNoteIndex];
+                if (!targetObj || targetObj.n === 'END') return;
+                
+                let targetOctave = 4;
+                if (targetObj.n.includes('^')) targetOctave = 5;
+                let playedId = keyMap[key] + targetOctave;
+                playNote(playedId);
+                
+                const keyEl = document.querySelector(`[data-note="${playedId}"]`);
+                if (keyEl) {
+                    keyEl.classList.add('pressed');
+                    setTimeout(() => keyEl.classList.remove('pressed'), 100);
+                }
             }
         });
 
-        function handleKeyboardInput(noteName) {
-             if (!currentNoteList || currentNoteList.length === 0) return;
-             const targetObj = currentNoteList[currentNoteIndex];
-             
-             if (!targetObj || targetObj.n === 'END') return;
-             
-             let targetOctave = 4;
-             if (targetObj.n.includes('^')) targetOctave = 5;
-             
-             let playedId = noteName + targetOctave;
-             
-             playNote(playedId);
-             
-             const keyEl = document.querySelector(`[data-note="${playedId}"]`);
-             if (keyEl) {
-                 keyEl.classList.add('pressed');
-                 setTimeout(() => keyEl.classList.remove('pressed'), 100);
-             }
-        }
-
-        // --- 6. STARTUP ---
         window.onload = () => {
             initPiano();
             updateSectionView();
         };
-
     </script>
 </body>
 </html>
