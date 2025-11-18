@@ -294,7 +294,6 @@
         // --- 0. AUDIO ENGINE ---
         let audioCtx;
         
-        // Note Frequencies (Octave 4 and 5)
         const noteFreqs = {
             'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
             'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
@@ -310,7 +309,6 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
-            // iOS UNLOCK: Play a silent buffer immediately
             const buffer = audioCtx.createBuffer(1, 1, 22050);
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
@@ -319,7 +317,6 @@
         }
 
         function playTone(note) {
-            // Ensure audio context exists/resumes if lost
             if (!audioCtx) initAudio();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
@@ -332,7 +329,6 @@
             osc.type = 'triangle'; 
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-            // Envelope
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
             gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01); 
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5); 
@@ -344,84 +340,72 @@
             osc.stop(audioCtx.currentTime + 0.5);
         }
 
-        // --- 1. DATA ---
-        const sections = [
-            {
-                title: "Part 1: Intro (D Loop)",
-                lh: "Hold Low D",
-                rh: "D - D - D^ - A - Ab - G - F - D - F - G",
-                notes: [
-                    {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D^', b:'D'}, {n:'A', b:'D'}, 
-                    {n:'G#', b:'D'}, {n:'G', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, 
-                    {n:'F', b:'D'}, {n:'G', b:'D'}
-                ]
-            },
-            {
-                title: "Part 1: Intro (C Loop)",
-                lh: "Hold Low C",
-                rh: "D - D - D^ - A - Ab - G - F - D - F - G",
-                notes: [
-                    {n:'D', b:'C'}, {n:'D', b:'C'}, {n:'D^', b:'C'}, {n:'A', b:'C'}, 
-                    {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, 
-                    {n:'F', b:'C'}, {n:'G', b:'C'}
-                ]
-            },
-            {
-                title: "Part 1: Intro (B Loop)",
-                lh: "Hold Low B",
-                rh: "D - D - D^ - A - Ab - G - F - D - F - G",
-                notes: [
-                    {n:'D', b:'B'}, {n:'D', b:'B'}, {n:'D^', b:'B'}, {n:'A', b:'B'}, 
-                    {n:'G#', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'D', b:'B'}, 
-                    {n:'F', b:'B'}, {n:'G', b:'B'}
-                ]
-            },
-            {
-                title: "Part 1: Intro (Bb Loop)",
-                lh: "Hold Low Bb (Black Key)",
-                rh: "D - D - D^ - A - Ab - G - F - D - F - G",
-                notes: [
-                    {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'A', b:'Bb'}, 
-                    {n:'G#', b:'Bb'}, {n:'G', b:'Bb'}, {n:'F', b:'Bb'}, {n:'D', b:'Bb'}, 
-                    {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
-                ]
-            },
-            {
-                title: "Part 2: Chorus (Fast Fives)",
-                lh: "Hold Low D",
-                rh: "F - F - F - F - D - D - D",
-                notes: [
-                    {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, 
-                    {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D', b:'D'}
-                ]
-            },
-            {
-                title: "Part 2: Chorus (The Climb)",
-                lh: "Hold Low C",
-                rh: "F - F - F - G - Ab - G - F - D - F - G",
-                notes: [
-                    {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}, 
-                    {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}
-                ]
-            },
-            {
-                title: "Part 2: Chorus (The Jump)",
-                lh: "Hold Low Bb",
-                rh: "D - D - D - A^ - D^ - C^ - A^",
-                notes: [
-                    {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'A^', b:'Bb'}, 
-                    {n:'D^', b:'Bb'}, {n:'C^', b:'Bb'}, {n:'A^', b:'Bb'}
-                ]
-            },
-            {
-                title: "Part 4: The Ending",
-                lh: "Hit Low D",
-                rh: "D - F - A - D^ (Final Hit)",
-                notes: [
-                    {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'A', b:'D'}, {n:'D^', b:'D'}, {n:'END', b:''}
-                ]
-            }
+        // --- 1. DATA BLOCKS ---
+        const introD = [
+            {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D^', b:'D'}, {n:'A', b:'D'}, 
+            {n:'G#', b:'D'}, {n:'G', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'G', b:'D'}
         ];
+        const introC = [
+            {n:'D', b:'C'}, {n:'D', b:'C'}, {n:'D^', b:'C'}, {n:'A', b:'C'}, 
+            {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}
+        ];
+        const introB = [
+            {n:'D', b:'B'}, {n:'D', b:'B'}, {n:'D^', b:'B'}, {n:'A', b:'B'}, 
+            {n:'G#', b:'B'}, {n:'G', b:'B'}, {n:'F', b:'B'}, {n:'D', b:'B'}, {n:'F', b:'B'}, {n:'G', b:'B'}
+        ];
+        const introBb = [
+            {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'A', b:'Bb'}, 
+            {n:'G#', b:'Bb'}, {n:'G', b:'Bb'}, {n:'F', b:'Bb'}, {n:'D', b:'Bb'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
+        ];
+
+        // Combine Intro Loops into one block for re-use
+        const fullIntroLoop = [...introD, ...introC, ...introB, ...introBb];
+
+        const chorus = [
+            {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'F', b:'D'}, {n:'D', b:'D'}, {n:'D', b:'D'}, {n:'D', b:'D'},
+            {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'}, {n:'G#', b:'C'}, {n:'G', b:'C'}, {n:'F', b:'C'}, {n:'D', b:'C'}, {n:'F', b:'C'}, {n:'G', b:'C'},
+            {n:'F', b:'B'}, {n:'F', b:'B'}, {n:'F', b:'B'}, {n:'G', b:'B'}, {n:'G#', b:'B'}, {n:'A', b:'B'}, {n:'C^', b:'B'}, {n:'A', b:'B'},
+            {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'D', b:'Bb'}, {n:'A^', b:'Bb'}, {n:'D^', b:'Bb'}, {n:'C^', b:'Bb'}, {n:'A^', b:'Bb'}
+        ];
+
+        // New Bridge Section (Slow/Quiet)
+        const bridge = [
+            {n:'F', b:'D'}, {n:'G', b:'D'}, {n:'G#', b:'C'}, {n:'G', b:'C'}, 
+            {n:'F', b:'B'}, {n:'D', b:'B'}, {n:'F', b:'Bb'}, {n:'G', b:'Bb'}
+        ];
+
+        const ending = [
+            {n:'D', b:'D'}, {n:'F', b:'D'}, {n:'A', b:'D'}, {n:'D^', b:'D'}, {n:'END', b:''}
+        ];
+
+        // --- SECTIONS DEFINITION ---
+        const sections = [
+            { title: "Part 1: Intro (D Loop)", lh: "Hold Low D", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introD },
+            { title: "Part 1: Intro (C Loop)", lh: "Hold Low C", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introC },
+            { title: "Part 1: Intro (B Loop)", lh: "Hold Low B", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introB },
+            { title: "Part 1: Intro (Bb Loop)", lh: "Hold Low Bb", rh: "D - D - D^ - A - Ab - G - F - D - F - G", notes: introBb },
+            { title: "Part 2: Chorus", lh: "Hold D -> C -> B -> Bb", rh: "The Fast Part!", notes: chorus },
+            { title: "Part 3: The Bridge", lh: "Slow Down...", rh: "F... G... G#... G...", notes: bridge }
+        ];
+
+        // --- FINAL STAGE ASSEMBLY ---
+        // Structure: Intro x2 -> Chorus -> Bridge -> Intro -> Ending
+        const fullSongNotes = [
+            ...fullIntroLoop, // Intro 1
+            ...fullIntroLoop, // Intro 2
+            ...chorus,        // Chorus
+            ...bridge,        // Bridge
+            ...fullIntroLoop, // Intro 3
+            ...ending         // Ending
+        ];
+
+        sections.push({
+            title: "FINAL STAGE: FULL SONG RUN!",
+            lh: "You're ready for the stage!",
+            rh: "Play the whole song from start to finish!",
+            notes: fullSongNotes
+        });
+
 
         // --- 2. STATE ---
         let currentSectionIndex = 0;
@@ -451,22 +435,19 @@
 
             for (let oct = 4; oct <= 5; oct++) {
                 keysWhite.forEach((note, i) => {
-                    // --- Create White Key ---
                     const wk = document.createElement('div');
                     wk.className = 'white-key';
                     wk.dataset.note = note + oct;
                     wk.innerHTML = `<span class="text-xs sm:text-sm">${note}</span>`;
                     
-                    // Use pointerdown for immediate response on touch & mouse
                     const playFn = (e) => {
-                        e.preventDefault(); // Prevent ghost clicks
+                        e.preventDefault();
                         playNote(note + oct);
                     };
                     wk.addEventListener('pointerdown', playFn);
                     
                     whiteContainer.appendChild(wk);
 
-                    // --- Create Black Key (if applicable) ---
                     if (note !== 'E' && note !== 'B') {
                         const bk = document.createElement('div');
                         bk.className = 'black-key';
@@ -509,16 +490,26 @@
             const scoreElements = document.querySelectorAll('.menu-score, .game-score, .final-score');
             scoreElements.forEach(el => {
                 el.textContent = totalScore.toLocaleString();
-                // Add pop animation
                 el.classList.remove('score-pop');
-                void el.offsetWidth; // trigger reflow
+                void el.offsetWidth; 
                 el.classList.add('score-pop');
             });
         }
 
         function updateSectionView() {
             const section = sections[currentSectionIndex];
-            document.getElementById('sectionTitle').textContent = section.title;
+            const titleEl = document.getElementById('sectionTitle');
+            
+            titleEl.textContent = section.title;
+            
+            if(currentSectionIndex === sections.length - 1) {
+                titleEl.classList.remove('text-yellow-400');
+                titleEl.classList.add('text-red-500', 'animate-pulse');
+            } else {
+                titleEl.classList.add('text-yellow-400');
+                titleEl.classList.remove('text-red-500', 'animate-pulse');
+            }
+
             document.getElementById('lhInstruction').textContent = section.lh;
             document.getElementById('rhInstruction').textContent = section.rh;
             document.getElementById('levelDisplay').textContent = `${currentSectionIndex + 1} / ${sections.length}`;
@@ -526,7 +517,6 @@
         }
 
         function startPractice() {
-            // Unlock audio on first user interaction (button click)
             initAudio();
 
             currentNoteList = sections[currentSectionIndex].notes;
@@ -561,7 +551,6 @@
                 practiceView.classList.add('hidden');
                 updateSectionView();
             } else {
-                // End of songs loop back
                 currentSectionIndex = 0;
                 updateSectionView();
                 sectionView.classList.remove('hidden');
@@ -587,7 +576,6 @@
                 return;
             }
 
-            // Update HUD
             document.getElementById('hudBass').textContent = noteObj.b;
             
             let displayNote = noteObj.n;
@@ -595,7 +583,6 @@
             if (displayNote === 'A#') displayNote = 'Bb';
             document.getElementById('targetNote').textContent = displayNote;
 
-            // Update Progress Bar
             const percent = (currentNoteIndex / (currentNoteList.length - 1)) * 100;
             document.getElementById('progressFill').style.width = `${percent}%`;
 
@@ -620,8 +607,6 @@
         }
 
         function playNote(noteId) {
-            // Audio Feedback for ANY key press
-            // Clean note ID (e.g., "C4")
             const cleanAudioId = noteId.replace('b', '#'); 
             playTone(cleanAudioId);
 
@@ -637,10 +622,8 @@
             const clickedKey = document.querySelector(`[data-note="${noteId}"]`);
             
             if (noteId === targetId) {
-                // CORRECT
                 if (clickedKey) clickedKey.classList.add('correct');
                 
-                // Score Logic
                 totalScore += 100;
                 updateScoreUI();
 
@@ -654,13 +637,11 @@
                     if (currentNoteIndex < currentNoteList.length) {
                         updatePracticeState();
                     } else {
-                        // Section Done
                         practiceView.classList.add('hidden');
                         successView.classList.remove('hidden');
                     }
                 }, 150);
             } else {
-                // INCORRECT
                 if (clickedKey) {
                     clickedKey.style.backgroundColor = '#ef4444';
                     setTimeout(() => {
@@ -670,8 +651,7 @@
             }
         }
         
-        // --- KEYBOARD SUPPORT ---
-         const keyMap = {
+        const keyMap = {
             'a': 'C', 's': 'D', 'd': 'E', 'f': 'F', 'g': 'G', 'h': 'A', 'j': 'B',
             'w': 'C#', 'e': 'D#', 't': 'F#', 'y': 'G#', 'u': 'A#',
         };
