@@ -65,9 +65,10 @@
             padding-bottom: 10px;
             color: #334155;
             font-weight: bold;
-            transition: all 0.1s;
+            transition: all 0.05s;
             box-shadow: 0 4px 0 #cbd5e1;
             cursor: pointer;
+            touch-action: none; /* Prevents zooming/scrolling on tap */
         }
         .white-key:active, .white-key.pressed {
             background-color: #e2e8f0;
@@ -93,7 +94,7 @@
             top: 0;
             z-index: 10;
             border-radius: 0 0 6px 6px;
-            transition: all 0.1s;
+            transition: all 0.05s;
             box-shadow: 0 4px 0 #0f172a;
             display: flex;
             justify-content: center;
@@ -103,6 +104,7 @@
             font-size: 0.6rem;
             cursor: pointer;
             pointer-events: auto;
+            touch-action: none; /* Prevents zooming/scrolling on tap */
         }
         .black-key:active, .black-key.pressed {
             background-color: #334155;
@@ -238,14 +240,17 @@
             </div>
             
             <div class="text-right">
-                <div class="text-xs text-slate-400 uppercase font-bold">Left Hand Playing</div>
+                <div class="text-xs text-slate-400 uppercase font-bold text-red-300">Left Hand (Bass)</div>
                 <div id="hudBass" class="text-2xl font-black text-red-400 drop-shadow-md">D</div>
             </div>
         </div>
 
         <!-- Note Display -->
         <div class="flex-grow flex flex-col items-center justify-center w-full mb-4">
-            <div class="text-slate-500 text-sm font-bold mb-2 uppercase tracking-widest">Play This Note</div>
+            <!-- Hand Label -->
+            <div class="text-cyan-400 text-xl sm:text-2xl font-black mb-4 uppercase tracking-widest drop-shadow-md animate-pulse">
+                Right Hand (Melody) ✋
+            </div>
             <div id="targetNote" class="text-8xl font-black text-yellow-300 drop-shadow-lg transition-all duration-75 scale-100">
                 D
             </div>
@@ -286,6 +291,59 @@
     </div>
 
     <script>
+        // --- 0. AUDIO ENGINE ---
+        let audioCtx;
+        
+        // Note Frequencies (Octave 4 and 5)
+        const noteFreqs = {
+            'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23,
+            'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+            'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46,
+            'F#5': 739.99, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77
+        };
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // iOS UNLOCK: Play a silent buffer immediately
+            const buffer = audioCtx.createBuffer(1, 1, 22050);
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioCtx.destination);
+            source.start(0);
+        }
+
+        function playTone(note) {
+            // Ensure audio context exists/resumes if lost
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const freq = noteFreqs[note];
+            if (!freq) return;
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'triangle'; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Envelope
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01); 
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5); 
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
         // --- 1. DATA ---
         const sections = [
             {
@@ -398,7 +456,14 @@
                     wk.className = 'white-key';
                     wk.dataset.note = note + oct;
                     wk.innerHTML = `<span class="text-xs sm:text-sm">${note}</span>`;
-                    wk.onmousedown = () => playNote(note + oct);
+                    
+                    // Use pointerdown for immediate response on touch & mouse
+                    const playFn = (e) => {
+                        e.preventDefault(); // Prevent ghost clicks
+                        playNote(note + oct);
+                    };
+                    wk.addEventListener('pointerdown', playFn);
+                    
                     whiteContainer.appendChild(wk);
 
                     // --- Create Black Key (if applicable) ---
@@ -416,7 +481,13 @@
 
                         bk.textContent = displayLabel;
                         bk.dataset.note = sharpNote;
-                        bk.onmousedown = () => playNote(sharpNote);
+                        
+                        const playFnBlack = (e) => {
+                            e.preventDefault(); 
+                            playNote(sharpNote);
+                        };
+                        bk.addEventListener('pointerdown', playFnBlack);
+                        
                         blackContainer.appendChild(bk);
                     }
                     globalWhiteIndex++;
@@ -455,6 +526,9 @@
         }
 
         function startPractice() {
+            // Unlock audio on first user interaction (button click)
+            initAudio();
+
             currentNoteList = sections[currentSectionIndex].notes;
             currentNoteIndex = 0;
             
@@ -546,6 +620,11 @@
         }
 
         function playNote(noteId) {
+            // Audio Feedback for ANY key press
+            // Clean note ID (e.g., "C4")
+            const cleanAudioId = noteId.replace('b', '#'); 
+            playTone(cleanAudioId);
+
             const targetObj = currentNoteList[currentNoteIndex];
             let targetOctave = 4;
             let targetNote = targetObj.n.replace('^', '');
